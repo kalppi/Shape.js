@@ -2,7 +2,6 @@ import Shape from '../src/index';
 
 expect.extend(Shape.toBeShaped());
 
-<<<<<<< Updated upstream
 describe('any', () => {
 	const anyShape = Shape.any();
 
@@ -15,8 +14,6 @@ describe('any', () => {
 	});
 });
 
-=======
->>>>>>> Stashed changes
 describe('integer', () => {
 	const intShape = Shape.integer();
 	
@@ -35,7 +32,6 @@ describe('integer', () => {
 		expect(1).not.toBeShaped(intShape.modify({min: 2}));
 		expect(3).not.toBeShaped(intShape.modify({max: 2}));
 	});
-<<<<<<< Updated upstream
 });
 
 describe('object', () => {
@@ -65,6 +61,4 @@ describe('oneOf', () => {
 		expect(1).not.toBeShaped(stringOrObject);
 		expect([]).not.toBeShaped(stringOrObject);
 	});
-=======
->>>>>>> Stashed changes
 });
