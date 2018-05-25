@@ -304,6 +304,10 @@ var ObjectShape = function () {
 							if (num !== field.shape) {
 								throw new Error('Field \'' + field.name + '\' (' + num + ') should be ' + field.shape + '.');
 							}
+						} else if (typeof field.shape === 'string') {
+							if (value !== field.shape) {
+								throw new Error('Field \'' + field.name + '\' (' + value + ') should be ' + field.shape + '.');
+							}
 						}
 					}
 
