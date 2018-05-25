@@ -69,6 +69,10 @@ class ObjectShape {
 
 		const handled = [];
 
+		if(typeof object !== 'object' || Array.isArray(object)) {
+			throw new Error(`${_getName(newName)} is not an object.`);
+		}
+
 		for(let field of this.fieldsArray) {
 			const value = object[field.name];
 
@@ -118,6 +122,8 @@ class ObjectShape {
 				console.warn(msg);
 			}
 		}
+
+		return true;
 	}
 }
 

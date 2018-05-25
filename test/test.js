@@ -2,6 +2,21 @@ import Shape from '../src/index';
 
 expect.extend(Shape.toBeShaped());
 
+<<<<<<< Updated upstream
+describe('any', () => {
+	const anyShape = Shape.any();
+
+	test('matches ints, floats, strings, objects, arrays', () => {
+		expect(1).toBeShaped(anyShape);
+		expect(1.2).toBeShaped(anyShape);
+		expect("abc").toBeShaped(anyShape);
+		expect({}).toBeShaped(anyShape);
+		expect([]).toBeShaped(anyShape);
+	});
+});
+
+=======
+>>>>>>> Stashed changes
 describe('integer', () => {
 	const intShape = Shape.integer();
 	
@@ -20,4 +35,36 @@ describe('integer', () => {
 		expect(1).not.toBeShaped(intShape.modify({min: 2}));
 		expect(3).not.toBeShaped(intShape.modify({max: 2}));
 	});
+<<<<<<< Updated upstream
+});
+
+describe('object', () => {
+	test('matches an empty object', () => {
+		expect({}).toBeShaped(Shape.object());
+	});
+
+	test('doens\'t match ints, floats, strings or arrays', () => {
+		const objShape = Shape.object();
+
+		expect(1).not.toBeShaped(objShape);
+		expect(1.2).not.toBeShaped(objShape);
+		expect("abc").not.toBeShaped(objShape);
+		expect([]).not.toBeShaped(objShape);
+	});
+});
+
+describe('oneOf', () => {
+	const stringOrObject = Shape.oneOf(Shape.string(), Shape.object());
+	
+	test('matches a string or an object', () => {
+		expect("abc").toBeShaped(stringOrObject);
+		expect({}).toBeShaped(stringOrObject);
+	});
+
+	test('doesn\'t match an integer or an array', () => {
+		expect(1).not.toBeShaped(stringOrObject);
+		expect([]).not.toBeShaped(stringOrObject);
+	});
+=======
+>>>>>>> Stashed changes
 });

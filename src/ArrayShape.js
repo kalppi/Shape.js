@@ -51,6 +51,8 @@ class ArrayShape {
 		for(let i = 0; i < object.length; i++) {
 			this.arrayShape.matches([...name, `[${i}]`], object[i]);
 		}
+
+		return true;
 	}
 }
 

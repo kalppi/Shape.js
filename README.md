@@ -46,3 +46,22 @@ request(app)
     .expect(arrayOfReservationsShape.matchesRequest());
 
 ```
+### Example when an api can return 5 objects or an error
+```js
+
+const successShape = Shape.object()
+                        .fields({
+                            id: Shape.integer(),
+                            name: Shape.string()
+                        });
+
+const failureShape = Shape.object()
+                        .field('error', Shape.string());
+
+const apiShape = Shape.anyOf(Shape.arrayOf(successShape, {count: 5}), failureShape);
+
+request(app)
+    .get('/api/get')
+    .expect(apiShape.matchesRequest());
+
+```
