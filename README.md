@@ -9,10 +9,10 @@ const idShape = Shape.integer({min: 1});
 const dateShape = Shape.regex(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/);
 
 const reservationShape = Shape.object()
-							.field('id', idShape)
-							.field('start', dateShape)
-							.field('start', dateShape)
-							.field('customer');
+                            .field('id', idShape)
+                            .field('start', dateShape)
+                            .field('start', dateShape)
+                            .field('customer');
 
 const arrayOfReservationsShape = Shape.arrayOf(reservationShape);
 
@@ -40,7 +40,7 @@ expect(data).toBeShaped(reservationShape);
 ### Using with Supertest
 ```js
 request(app)
-	.get('/api/reservation')
-	.expect(arrayOfReservationsShape.matchesRequest());
+    .get('/api/reservation')
+    .expect(arrayOfReservationsShape.matchesRequest());
 
 ```
