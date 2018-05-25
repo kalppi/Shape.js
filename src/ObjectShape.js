@@ -1,4 +1,6 @@
 import ArrayShape from './ArrayShape';
+import BasicShape from './BasicShape';
+import { _getName } from './index';
 
 class ObjectShape {
 	constructor(options) {
@@ -44,14 +46,26 @@ class ObjectShape {
 		return this;
 	}
 
-	matchesRequest() {
+	matchesRequest(name) {
+		name = name || '<anonymous>';
+
 		return (res) => {
-			return this.matches(res.body, {});
+			return this.matches(name, res.body);
 		}
 	}
 
-	matches(object, options) {
-		options = options || {};
+	matches(a, b) {
+		let name, object;
+
+		if(b === undefined) {
+			name = '<anonymous>';
+			object = a;
+		} else {
+			name = a;
+			object = b;
+		}
+
+		if(!Array.isArray(name)) name = [name];
 
 		const handled = [];
 
@@ -62,20 +76,22 @@ class ObjectShape {
 				throw new Error(`Missing field: ${field.name}`);
 			}
 
+			const newName = [...name, field.name];
+
 			if(field.shape !== undefined) {
-				if(typeof field.shape === 'function') {
-					field.shape(field, value);
+				if(field.shape instanceof BasicShape) {
+					field.shape.matches(newName, value);	
 				} else if(field.shape instanceof ArrayShape || field.shape instanceof ObjectShape) {
-					field.shape.matches(value);
+					field.shape.matches(newName, value);
 				} else if(typeof field.shape === 'number') {
 					const num = parseInt(value, 10);
 
 					if(num !== field.shape) {
-						throw new Error(`Field '${field.name}' (${num}) should be ${field.shape}.`);
+						throw new Error(`${_getName(newName)} (${num}) should be ${field.shape}.`);
 					}
 				} else if(typeof field.shape === 'string') {
 					if(value !== field.shape) {
-						throw new Error(`Field '${field.name}' (${value}) should be ${field.shape}.`);
+						throw new Error(`${_getName(newName)} (${value}) should be ${field.shape}.`);
 					}
 				}
 			}

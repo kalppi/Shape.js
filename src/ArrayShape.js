@@ -23,21 +23,33 @@ class ArrayShape {
 		return this;
 	}
 
-	matchesRequest() {
+	matchesRequest(name) {
+		name = name || '<anonymous>';
+
 		return (res) => {
-			return this.matches(res.body, {});
+			return this.matches(name, res.body);
 		}
 	}
 
-	matches(object, options) {
-		options = options || {};
+	matches(a, b) {
+		let name, object;
+
+		if(b === undefined) {
+			name = '<anonymous>';
+			object = a;
+		} else {
+			name = a;
+			object = b;
+		}
+
+		if(!Array.isArray(name)) name = [name];
 
 		if(!Array.isArray(object)) {
 			throw new Error(`Expected array.`);
 		}
 
-		for(let item of object) {
-			this.arrayShape.matches(item);
+		for(let i = 0; i < object.length; i++) {
+			this.arrayShape.matches([...name, `[${i}]`], object[i]);
 		}
 	}
 }

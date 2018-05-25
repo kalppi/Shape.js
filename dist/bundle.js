@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -80,11 +80,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _ObjectShape = __webpack_require__(1);
+var _ObjectShape = __webpack_require__(2);
 
 var _ObjectShape2 = _interopRequireDefault(_ObjectShape);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -138,45 +140,37 @@ var ArrayShape = function () {
 		}
 	}, {
 		key: 'matchesRequest',
-		value: function matchesRequest() {
+		value: function matchesRequest(name) {
 			var _this = this;
 
+			name = name || '<anonymous>';
+
 			return function (res) {
-				return _this.matches(res.body, {});
+				return _this.matches(name, res.body);
 			};
 		}
 	}, {
 		key: 'matches',
-		value: function matches(object, options) {
-			options = options || {};
+		value: function matches(a, b) {
+			var name = void 0,
+			    object = void 0;
+
+			if (b === undefined) {
+				name = '<anonymous>';
+				object = a;
+			} else {
+				name = a;
+				object = b;
+			}
+
+			if (!Array.isArray(name)) name = [name];
 
 			if (!Array.isArray(object)) {
 				throw new Error('Expected array.');
 			}
 
-			var _iteratorNormalCompletion2 = true;
-			var _didIteratorError2 = false;
-			var _iteratorError2 = undefined;
-
-			try {
-				for (var _iterator2 = object[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-					var item = _step2.value;
-
-					this.arrayShape.matches(item);
-				}
-			} catch (err) {
-				_didIteratorError2 = true;
-				_iteratorError2 = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion2 && _iterator2.return) {
-						_iterator2.return();
-					}
-				} finally {
-					if (_didIteratorError2) {
-						throw _iteratorError2;
-					}
-				}
+			for (var i = 0; i < object.length; i++) {
+				this.arrayShape.matches([].concat(_toConsumableArray(name), ['[' + i + ']']), object[i]);
 			}
 		}
 	}]);
@@ -199,9 +193,54 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var BasicShape = function () {
+	function BasicShape(fn, options) {
+		_classCallCheck(this, BasicShape);
+
+		this.fn = fn;
+		this.options = options || {};
+	}
+
+	_createClass(BasicShape, [{
+		key: 'matches',
+		value: function matches(a, b) {
+			if (b === undefined) {
+				this.fn('<anonymous>', a, this.options);
+			} else {
+				this.fn(a, b, this.options);
+			}
+		}
+	}]);
+
+	return BasicShape;
+}();
+
+exports.default = BasicShape;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _ArrayShape = __webpack_require__(0);
 
 var _ArrayShape2 = _interopRequireDefault(_ArrayShape);
+
+var _BasicShape = __webpack_require__(1);
+
+var _BasicShape2 = _interopRequireDefault(_BasicShape);
+
+var _index = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -265,17 +304,30 @@ var ObjectShape = function () {
 		}
 	}, {
 		key: 'matchesRequest',
-		value: function matchesRequest() {
+		value: function matchesRequest(name) {
 			var _this = this;
 
+			name = name || '<anonymous>';
+
 			return function (res) {
-				return _this.matches(res.body, {});
+				return _this.matches(name, res.body);
 			};
 		}
 	}, {
 		key: 'matches',
-		value: function matches(object, options) {
-			options = options || {};
+		value: function matches(a, b) {
+			var name = void 0,
+			    object = void 0;
+
+			if (b === undefined) {
+				name = '<anonymous>';
+				object = a;
+			} else {
+				name = a;
+				object = b;
+			}
+
+			if (!Array.isArray(name)) name = [name];
 
 			var handled = [];
 
@@ -293,20 +345,22 @@ var ObjectShape = function () {
 						throw new Error('Missing field: ' + field.name);
 					}
 
+					var newName = [].concat(_toConsumableArray(name), [field.name]);
+
 					if (field.shape !== undefined) {
-						if (typeof field.shape === 'function') {
-							field.shape(field, value);
+						if (field.shape instanceof _BasicShape2.default) {
+							field.shape.matches(newName, value);
 						} else if (field.shape instanceof _ArrayShape2.default || field.shape instanceof ObjectShape) {
-							field.shape.matches(value);
+							field.shape.matches(newName, value);
 						} else if (typeof field.shape === 'number') {
 							var num = parseInt(value, 10);
 
 							if (num !== field.shape) {
-								throw new Error('Field \'' + field.name + '\' (' + num + ') should be ' + field.shape + '.');
+								throw new Error('Field ' + (0, _index.getName)(newName) + ' (' + num + ') should be ' + field.shape + '.');
 							}
 						} else if (typeof field.shape === 'string') {
 							if (value !== field.shape) {
-								throw new Error('Field \'' + field.name + '\' (' + value + ') should be ' + field.shape + '.');
+								throw new Error('Field ' + (0, _index.getName)(newName) + ' (' + value + ') should be ' + field.shape + '.');
 							}
 						}
 					}
@@ -377,7 +431,7 @@ var ObjectShape = function () {
 exports.default = ObjectShape;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -386,8 +440,9 @@ exports.default = ObjectShape;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.getName = undefined;
 
-var _ObjectShape = __webpack_require__(1);
+var _ObjectShape = __webpack_require__(2);
 
 var _ObjectShape2 = _interopRequireDefault(_ObjectShape);
 
@@ -395,7 +450,15 @@ var _ArrayShape = __webpack_require__(0);
 
 var _ArrayShape2 = _interopRequireDefault(_ArrayShape);
 
+var _BasicShape = __webpack_require__(1);
+
+var _BasicShape2 = _interopRequireDefault(_BasicShape);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var getName = exports.getName = function getName(arr) {
+	return arr.join('.').replace('.[', '[');
+};
 
 exports.default = {
 	object: function object(options) {
@@ -407,64 +470,72 @@ exports.default = {
 	},
 
 	integer: function integer(options) {
-		options = options || {};
+		console.log('#');
+		var fn = function fn(field, value, options) {
+			value = String(value);
 
-		return function (field, s) {
-			s = String(s);
-
-			if (/^\-?[0-9]+$/.test(s)) {
-				var int = parseInt(s, 10);
+			if (/^\-?[0-9]+$/.test(value)) {
+				var int = parseInt(value, 10);
 
 				if (options.min !== undefined) {
-					if (s < options.min) {
-						throw Error('Field \'' + field.name + '\' (' + s + ') is smaller than expected minimum ' + options.min + '.');
+					if (value < options.min) {
+						throw Error('Field ' + field + ' (' + value + ') is smaller than expected minimum ' + options.min + '.');
 					}
 				}
 
 				if (options.max !== undefined) {
-					if (s > options.max) {
-						throw Error('Field \'' + field.name + '\' (' + s + ') is bigger than expected maximum ' + options.max + '.');
+					if (value > options.max) {
+						throw Error('Field ' + field + ' (' + value + ') is bigger than expected maximum ' + options.max + '.');
 					}
 				}
 			} else {
-				throw Error('Field \'' + field.name + '\' has wrong shape. Expected integer.');
+				throw Error('Field ' + field + ' has wrong shape. Expected integer.');
 			}
 		};
+		return new _BasicShape2.default(fn, options);
 	},
 
-	regex: function regex(_regex) {
-		return function (field, s) {
-			if (!_regex.test(s)) {
-				throw Error('Field \'' + field.name + '\' (' + s + ') not passing regex ' + _regex + '.');
+	regex: function regex(_regex, options) {
+		var fn = function fn(name, value, options) {
+			if (!_regex.test(value)) {
+				throw Error('Field ' + getName(name) + ' (' + value + ') not passing regex ' + _regex + '.');
 			}
 		};
+
+		return new _BasicShape2.default(fn, options);
 	},
 
-	array: function array() {
-		return function (field, s) {
-			if (!Array.isArray(s)) {
-				throw Error('Field \'' + field.name + '\' is not an array.');
+	array: function array(options) {
+		var fn = function fn(field, value, options) {
+			if (!Array.isArray(value)) {
+				throw Error('Field ' + field + ' is not an array.');
 			}
 		};
+
+		return new _BasicShape2.default(fn, options);
 	},
 
-	any: function any() {
-		return function (field, s) {};
+	any: function any(options) {
+		var fn = function fn(field, value, options) {};
+
+		return new _BasicShape2.default(fn, options);
 	},
 
 	string: function string(options) {
-		return function (field, s) {
-			if (typeof s !== 'string') {
-				throw Error('Field \'' + field.name + '\' is not a string.');
+		var fn = function fn(field, value, options) {
+			if (typeof value !== 'string') {
+				throw Error('Field ' + field + ' is not a string.');
 			}
 		};
+
+		return new _BasicShape2.default(fn, options);
 	},
 
 	toBeShaped: function toBeShaped() {
 		return {
 			toBeShaped: function toBeShaped(received, shape) {
 				try {
-					shape.matches(received);
+					shape.matches(shape.name, received);
 				} catch (e) {
 					return { pass: false, message: function message() {
 							return e.message;
