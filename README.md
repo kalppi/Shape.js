@@ -5,6 +5,8 @@ Shape.js is a library that helps you define what members and data types your obj
 ## Example
 
 ```js
+import Shape from 'shape.js';
+
 const idShape = Shape.integer({min: 1});
 const dateShape = Shape.regex(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/);
 
