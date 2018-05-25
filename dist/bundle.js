@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -80,32 +80,59 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _ObjectShape = __webpack_require__(1);
+
+var _ObjectShape2 = _interopRequireDefault(_ObjectShape);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Shape = function () {
-	function Shape(type, options) {
-		_classCallCheck(this, Shape);
+var ArrayShape = function () {
+	function ArrayShape(arrayShape, options) {
+		_classCallCheck(this, ArrayShape);
 
-		this.type = type;
-		this.fields = [];
-		this.omitFields = [];
+		this.arrayShape = new _ObjectShape2.default(options);
 		this.options = options || {};
+
+		var _iteratorNormalCompletion = true;
+		var _didIteratorError = false;
+		var _iteratorError = undefined;
+
+		try {
+			for (var _iterator = arrayShape.fieldsArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+				var field = _step.value;
+
+				this.arrayShape.field(field.name, field.shape);
+			}
+		} catch (err) {
+			_didIteratorError = true;
+			_iteratorError = err;
+		} finally {
+			try {
+				if (!_iteratorNormalCompletion && _iterator.return) {
+					_iterator.return();
+				}
+			} finally {
+				if (_didIteratorError) {
+					throw _iteratorError;
+				}
+			}
+		}
 	}
 
-	_createClass(Shape, [{
-		key: 'field',
-		value: function field(name, shape) {
-			this.fields.push({
-				shape: shape,
-				name: name
-			});
+	_createClass(ArrayShape, [{
+		key: 'omit',
+		value: function omit(name) {
+			this.arrayShape.omit(name);
 
 			return this;
 		}
 	}, {
-		key: 'omit',
-		value: function omit(name) {
-			this.omitFields.push(name);
+		key: 'field',
+		value: function field(name, shape) {
+			this.arrayShape.omit(name);
+			this.arrayShape.field(name, shape);
 
 			return this;
 		}
@@ -123,131 +150,261 @@ var Shape = function () {
 		value: function matches(object, options) {
 			options = options || {};
 
-			switch (this.type.type) {
-				case 'arrayOf':
-					if (!Array.isArray(object)) {
-						throw new Error('Expected array.');
+			if (!Array.isArray(object)) {
+				throw new Error('Expected array.');
+			}
+
+			var _iteratorNormalCompletion2 = true;
+			var _didIteratorError2 = false;
+			var _iteratorError2 = undefined;
+
+			try {
+				for (var _iterator2 = object[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+					var item = _step2.value;
+
+					this.arrayShape.matches(item);
+				}
+			} catch (err) {
+				_didIteratorError2 = true;
+				_iteratorError2 = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion2 && _iterator2.return) {
+						_iterator2.return();
 					}
-
-					var _iteratorNormalCompletion = true;
-					var _didIteratorError = false;
-					var _iteratorError = undefined;
-
-					try {
-						for (var _iterator = object[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-							var item = _step.value;
-
-							var err = this.type.shape.matches(item, { omit: this.omitFields });
-
-							if (err) throw err;
-						}
-					} catch (err) {
-						_didIteratorError = true;
-						_iteratorError = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion && _iterator.return) {
-								_iterator.return();
-							}
-						} finally {
-							if (_didIteratorError) {
-								throw _iteratorError;
-							}
-						}
+				} finally {
+					if (_didIteratorError2) {
+						throw _iteratorError2;
 					}
-
-					break;
-				case 'object':
-					var handled = [];
-
-					var _iteratorNormalCompletion2 = true;
-					var _didIteratorError2 = false;
-					var _iteratorError2 = undefined;
-
-					try {
-						for (var _iterator2 = this.fields[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-							var field = _step2.value;
-
-							if (options.omit && options.omit.includes(field.name)) continue;
-
-							var value = object[field.name];
-
-							if (value === undefined) {
-								throw new Error('Missing field: ' + field.name);
-							}
-
-							if (field.shape !== undefined) {
-								var _err = field.shape(field, value);
-
-								if (_err) throw _err;
-							}
-
-							handled.push(field.name);
-						}
-					} catch (err) {
-						_didIteratorError2 = true;
-						_iteratorError2 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion2 && _iterator2.return) {
-								_iterator2.return();
-							}
-						} finally {
-							if (_didIteratorError2) {
-								throw _iteratorError2;
-							}
-						}
-					}
-
-					if (this.options.errorUnknowns) {
-						var keys = Object.keys(object);
-
-						var _iteratorNormalCompletion3 = true;
-						var _didIteratorError3 = false;
-						var _iteratorError3 = undefined;
-
-						try {
-							for (var _iterator3 = keys[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-								var key = _step3.value;
-
-								if (!handled.includes(key)) {
-									throw new Error('Unknown key \'' + key + '\'');
-								}
-							}
-						} catch (err) {
-							_didIteratorError3 = true;
-							_iteratorError3 = err;
-						} finally {
-							try {
-								if (!_iteratorNormalCompletion3 && _iterator3.return) {
-									_iterator3.return();
-								}
-							} finally {
-								if (_didIteratorError3) {
-									throw _iteratorError3;
-								}
-							}
-						}
-					}
-
-					break;
+				}
 			}
 		}
 	}]);
 
-	return Shape;
+	return ArrayShape;
 }();
+
+exports.default = ArrayShape;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ArrayShape = __webpack_require__(0);
+
+var _ArrayShape2 = _interopRequireDefault(_ArrayShape);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ObjectShape = function () {
+	function ObjectShape(options) {
+		_classCallCheck(this, ObjectShape);
+
+		this.fieldsArray = [];
+		this.options = options || {};
+	}
+
+	_createClass(ObjectShape, [{
+		key: 'field',
+		value: function field(name, shape) {
+			this.fieldsArray.push({
+				name: name,
+				shape: shape
+			});
+
+			return this;
+		}
+	}, {
+		key: 'fields',
+		value: function fields(_fields) {
+			for (var field in _fields) {
+				this.field(field, _fields[field]);
+			}
+
+			return this;
+		}
+	}, {
+		key: 'clone',
+		value: function clone() {
+			var shape = new ObjectShape(this.options);
+
+			shape.fieldsArray = [].concat(_toConsumableArray(this.fieldsArray));
+
+			return shape;
+		}
+	}, {
+		key: 'omit',
+		value: function omit(name) {
+			this.fieldsArray = this.fieldsArray.filter(function (f) {
+				return f.name !== name;
+			});
+
+			return this;
+		}
+	}, {
+		key: 'only',
+		value: function only(name) {
+			this.fieldsArray = this.fieldsArray.filter(function (f) {
+				return f.name === name;
+			});
+
+			return this;
+		}
+	}, {
+		key: 'matchesRequest',
+		value: function matchesRequest() {
+			var _this = this;
+
+			return function (res) {
+				return _this.matches(res.body, {});
+			};
+		}
+	}, {
+		key: 'matches',
+		value: function matches(object, options) {
+			options = options || {};
+
+			var handled = [];
+
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = this.fieldsArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var field = _step.value;
+
+					var value = object[field.name];
+
+					if (value === undefined) {
+						throw new Error('Missing field: ' + field.name);
+					}
+
+					if (field.shape !== undefined) {
+						if (typeof field.shape === 'function') {
+							field.shape(field, value);
+						} else if (field.shape instanceof _ArrayShape2.default || field.shape instanceof ObjectShape) {
+							field.shape.matches(value);
+						} else if (typeof field.shape === 'number') {
+							var num = parseInt(value, 10);
+
+							if (num !== field.shape) {
+								throw new Error('Field \'' + field.name + '\' (' + num + ') should be ' + field.shape + '.');
+							}
+						}
+					}
+
+					handled.push(field.name);
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+
+			var unknown = [];
+			var keys = Object.keys(object);
+
+			var _iteratorNormalCompletion2 = true;
+			var _didIteratorError2 = false;
+			var _iteratorError2 = undefined;
+
+			try {
+				for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+					var key = _step2.value;
+
+					if (!handled.includes(key)) {
+						unknown.push(key);
+					}
+				}
+			} catch (err) {
+				_didIteratorError2 = true;
+				_iteratorError2 = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion2 && _iterator2.return) {
+						_iterator2.return();
+					}
+				} finally {
+					if (_didIteratorError2) {
+						throw _iteratorError2;
+					}
+				}
+			}
+
+			if (unknown.length > 0) {
+				var _keys = unknown.join(', ');
+				var msg = 'Unknown key' + (unknown.length > 1 ? 's' : '') + ' \'' + _keys + '\'';
+
+				if (this.options.errorUnknowns) {
+					throw new Error(msg);
+				} else {
+					console.warn(msg);
+				}
+			}
+		}
+	}]);
+
+	return ObjectShape;
+}();
+
+exports.default = ObjectShape;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _ObjectShape = __webpack_require__(1);
+
+var _ObjectShape2 = _interopRequireDefault(_ObjectShape);
+
+var _ArrayShape = __webpack_require__(0);
+
+var _ArrayShape2 = _interopRequireDefault(_ArrayShape);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
 	object: function object(options) {
-		return new Shape({ type: 'object' }, options);
+		return new _ObjectShape2.default(options);
 	},
 
 	arrayOf: function arrayOf(shape, options) {
-		return new Shape({ type: 'arrayOf', shape: shape }, options);
+		return new _ArrayShape2.default(shape, options);
 	},
 
 	integer: function integer(options) {
+		options = options || {};
+
 		return function (field, s) {
 			s = String(s);
 
@@ -256,17 +413,17 @@ exports.default = {
 
 				if (options.min !== undefined) {
 					if (s < options.min) {
-						return new Error('Field \'' + field.name + '\' (' + s + ') is smaller than expected minimum ' + options.min + '.');
+						throw Error('Field \'' + field.name + '\' (' + s + ') is smaller than expected minimum ' + options.min + '.');
 					}
 				}
 
 				if (options.max !== undefined) {
 					if (s > options.max) {
-						return new Error('Field \'' + field.name + '\' (' + s + ') is bigger than expected maximum ' + options.max + '.');
+						throw Error('Field \'' + field.name + '\' (' + s + ') is bigger than expected maximum ' + options.max + '.');
 					}
 				}
 			} else {
-				return new Error('Field \'' + field.name + '\' has wrong shape. Expected integer.');
+				throw Error('Field \'' + field.name + '\' has wrong shape. Expected integer.');
 			}
 		};
 	},
@@ -274,7 +431,7 @@ exports.default = {
 	regex: function regex(_regex) {
 		return function (field, s) {
 			if (!_regex.test(s)) {
-				return new Error('Field \'' + field.name + '\' (' + s + ') not passing regex ' + _regex + '.');
+				throw Error('Field \'' + field.name + '\' (' + s + ') not passing regex ' + _regex + '.');
 			}
 		};
 	},
@@ -282,7 +439,19 @@ exports.default = {
 	array: function array() {
 		return function (field, s) {
 			if (!Array.isArray(s)) {
-				return new Error('Field \'' + field.name + '\' is not an array.');
+				throw Error('Field \'' + field.name + '\' is not an array.');
+			}
+		};
+	},
+
+	any: function any() {
+		return function (field, s) {};
+	},
+
+	string: function string(options) {
+		return function (field, s) {
+			if (typeof s !== 'string') {
+				throw Error('Field \'' + field.name + '\' is not a string.');
 			}
 		};
 	},
