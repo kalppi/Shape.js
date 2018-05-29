@@ -1,6 +1,6 @@
 # Shape.js
 
-Shape.js is a library that helps you define what members and data types, the shape, your objects are supposed to have, and then use that information in your unit tests.
+Shape.js is a library that helps you define what members and data types, the "shape", your objects are supposed to have, and then use that information in your unit tests.
 
 ## Example
 
