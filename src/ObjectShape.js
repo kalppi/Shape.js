@@ -75,12 +75,11 @@ class ObjectShape {
 
 		for(let field of this.fieldsArray) {
 			const value = object[field.name];
+			const newName = [...name, field.name];
 
 			if(value === undefined) {
-				throw new Error(`Missing field: ${field.name}`);
+				throw new Error(`Missing field: ${_getName(newName)}`);
 			}
-
-			const newName = [...name, field.name];
 
 			if(field.shape !== undefined) {
 				if(field.shape instanceof BasicShape) {

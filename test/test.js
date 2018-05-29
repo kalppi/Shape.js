@@ -47,6 +47,23 @@ describe('object', () => {
 		expect("abc").not.toBeShaped(objShape);
 		expect([]).not.toBeShaped(objShape);
 	});
+
+	test('has sensible errors', () => {
+		const objShape = Shape.object()
+							.field('id')
+							.field('user', Shape.object().field('id').field('name'));
+
+		try {
+			objShape.matches('obj', {
+				id: 1,
+				user: {
+					id: 1
+				}
+			});
+		} catch (e) {
+			expect(e.toString().indexOf('obj.user.name')).not.toBe(-1);
+		}
+	});
 });
 
 describe('oneOf', () => {

@@ -510,12 +510,11 @@ var ObjectShape = function () {
 					var field = _step.value;
 
 					var value = object[field.name];
+					var _newName = [].concat(_toConsumableArray(name), [field.name]);
 
 					if (value === undefined) {
-						throw new Error('Missing field: ' + field.name);
+						throw new Error('Missing field: ' + (0, _index._getName)(_newName));
 					}
-
-					var _newName = [].concat(_toConsumableArray(name), [field.name]);
 
 					if (field.shape !== undefined) {
 						if (field.shape instanceof _BasicShape2.default) {
