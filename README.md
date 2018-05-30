@@ -46,7 +46,7 @@ request(app)
     .expect(arrayOfReservationsShape.matchesRequest());
 
 ```
-### Example when an api can return 5 objects or an error
+### Example of modelling an api that can return 5 objects or an error
 ```js
 
 const successShape = Shape.object()
